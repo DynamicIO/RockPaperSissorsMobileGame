@@ -13,6 +13,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { LoadingScreen } from './components/LoadingScreen';
 
 const { width, height } = Dimensions.get('window');
 
@@ -35,6 +36,7 @@ const getWinner = (player, computer) => {
 };
 
 export default function App() {
+  const [isLoading, setIsLoading] = useState(true);
   const [playerChoice, setPlayerChoice] = useState(null);
   const [computerChoice, setComputerChoice] = useState(null);
   const [result, setResult] = useState(null);
@@ -51,6 +53,11 @@ export default function App() {
   const confettiAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
+    // Show loading screen for 5 seconds
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 5000);
+
     // Entrance animation
     Animated.parallel([
       Animated.timing(fadeAnim, {
@@ -81,6 +88,8 @@ export default function App() {
         }),
       ])
     ).start();
+
+    return () => clearTimeout(timer);
   }, []);
 
   const playGame = async (choice) => {
@@ -182,6 +191,10 @@ export default function App() {
     if (result === 'player') return '#00FF87';
     return '#FF4757';
   };
+
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
 
   return (
     <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
@@ -362,6 +375,11 @@ export default function App() {
               </TouchableOpacity>
             )}
           </View>
+
+          {/* Footer */}
+          <View style={styles.footer}>
+            <Text style={styles.poweredBy}>Powered by Dynamic.IO</Text>
+          </View>
         </Animated.View>
         </ScrollView>
       </LinearGradient>
@@ -388,7 +406,7 @@ const styles = StyleSheet.create({
   header: {
     alignItems: 'center',
     marginBottom: 20,
-    marginTop: 35,
+    marginTop: 50,
   },
   title: {
     fontSize: 28,
@@ -570,6 +588,17 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: '700',
     fontSize: 12,
+    letterSpacing: 1,
+  },
+  footer: {
+    alignItems: 'center',
+    paddingVertical: 20,
+    marginTop: 10,
+  },
+  poweredBy: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#666',
     letterSpacing: 1,
   },
 });

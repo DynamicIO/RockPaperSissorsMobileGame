@@ -15,6 +15,7 @@ import * as Haptics from 'expo-haptics';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { ParticleEffect } from './components/ParticleEffect';
 import { GlowingButton } from './components/GlowingButton';
+import { LoadingScreen } from './components/LoadingScreen';
 
 const { width, height } = Dimensions.get('window');
 
@@ -37,6 +38,7 @@ const getWinner = (player, computer) => {
 };
 
 export default function App() {
+  const [isLoading, setIsLoading] = useState(true);
   const [playerChoice, setPlayerChoice] = useState(null);
   const [computerChoice, setComputerChoice] = useState(null);
   const [result, setResult] = useState(null);
@@ -58,6 +60,11 @@ export default function App() {
   const rotateAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
+    // Show loading screen for 5 seconds
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 5000);
+
     // Entrance animation
     Animated.parallel([
       Animated.timing(fadeAnim, {
@@ -97,6 +104,8 @@ export default function App() {
         useNativeDriver: true,
       })
     ).start();
+
+    return () => clearTimeout(timer);
   }, []);
 
   const spin = rotateAnim.interpolate({
@@ -227,6 +236,10 @@ export default function App() {
   };
 
   const winRate = totalGames > 0 ? ((score.player / totalGames) * 100).toFixed(1) : 0;
+
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
 
   return (
     <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
@@ -425,6 +438,7 @@ export default function App() {
           {/* Footer Stats */}
           <View style={styles.footer}>
             <Text style={styles.footerText}>Total Games: {totalGames}</Text>
+            <Text style={styles.poweredBy}>Powered by Dynamic.IO</Text>
           </View>
         </Animated.View>
         </ScrollView>
@@ -452,7 +466,7 @@ const styles = StyleSheet.create({
   header: {
     alignItems: 'center',
     marginBottom: 15,
-    marginTop: 35,
+    marginTop: 50,
   },
   titleContainer: {
     alignItems: 'center',
@@ -677,11 +691,18 @@ const styles = StyleSheet.create({
   footer: {
     alignItems: 'center',
     paddingBottom: 5,
+    gap: 8,
   },
   footerText: {
     color: '#666',
     fontSize: 11,
     fontWeight: '600',
+  },
+  poweredBy: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#666',
+    letterSpacing: 1,
   },
 });
 
