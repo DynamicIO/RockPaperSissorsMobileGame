@@ -19,6 +19,14 @@ import { LoadingScreen } from './components/LoadingScreen';
 
 const { width, height } = Dimensions.get('window');
 
+const CONTENT_HORIZONTAL_PADDING = 20; // must match styles.content.paddingHorizontal
+const BUTTON_GAP = 8; // must match styles.buttonContainer.gap
+const BUTTON_WIDTH = Math.min(
+  110,
+  Math.floor((width - CONTENT_HORIZONTAL_PADDING * 2 - BUTTON_GAP * 2) / 3)
+);
+const BUTTON_ROW_WIDTH = BUTTON_WIDTH * 3 + BUTTON_GAP * 2;
+
 const CHOICES = {
   ROCK: { name: 'rock', icon: 'gesture-tap-hold', emoji: '🪨' },
   PAPER: { name: 'paper', icon: 'newspaper-variant', emoji: '📄' },
@@ -645,14 +653,14 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    width: BUTTON_ROW_WIDTH,
+    justifyContent: 'space-between',
+    alignSelf: 'center',
     marginBottom: 12,
-    gap: 8,
     marginTop: 8,
   },
   button: {
-    flex: 1,
-    maxWidth: 110,
+    width: BUTTON_WIDTH,
   },
   buttonEmoji: {
     fontSize: 36,
